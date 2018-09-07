@@ -37,7 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'SteamService.Game'
+    'SteamService.Game',
+    'rest_framework'
 ]
 
 MIDDLEWARE = [
