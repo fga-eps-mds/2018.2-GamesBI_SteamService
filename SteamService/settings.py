@@ -37,6 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'SteamService.Game',
+    'rest_framework'
 ]
 
 MIDDLEWARE = [
@@ -73,12 +75,12 @@ WSGI_APPLICATION = 'SteamService.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
-DATABASES = { 
+DATABASES = {
     'default': {
         'ENGINE': 'djongo',
         'NAME': 'mongo',
         'HOST': 'db'
-    }   
+    }
 }
 
 # Password validation
