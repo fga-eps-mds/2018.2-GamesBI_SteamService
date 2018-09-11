@@ -17,8 +17,13 @@ class SteamView(APIView):
     def get(self, request, format=None):
 
         Game.objects.all().delete()
-        games_id = [10, 20, 5]
-        for game_id in games_id:
+
+        url = 'http://localhost:8000/get_igdb_games_list/Id_Steam'
+        header = {'Accept': 'application/json'}
+        id_data = requests.get(url, headers=header)
+        ndata = id_data.json()
+
+        for game_id in id_data:
             game_data = self.get_game_data(game_id)
             filter_game_data = self.filter_game_data(game_data)
             if filter_game_data:
