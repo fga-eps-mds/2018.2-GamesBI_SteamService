@@ -24,7 +24,7 @@ router = routers.DefaultRouter()
 router.register(r'games', GamesViewSet)
 
 urlpatterns = [
-    path('', include(router.urls)),
+    path('api/', include(router.urls)),
     # url(r'^admin/', admin.site.urls),
     path('admin/', admin.site.urls),
     path('import_data/', include('SteamService.importdata.urls')),
