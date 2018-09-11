@@ -40,6 +40,7 @@ class SteamView(APIView):
             print(game.average_forever)
             print(game.average_2weeks)
             print(game.price)
+            print(game.owners)
             print(game.lenguages)
             print('------------')
             game_data = {
@@ -52,7 +53,6 @@ class SteamView(APIView):
 
 
     def get_game_data(self, game_id):
-        # url = 'https://store.steampowered.com/api/appdetails?appids={}'.format(game_id)
         url = 'http://steamspy.com/api.php?request=appdetails&appid={}'.format(game_id)
         header = {'Accept': 'application/json'}
         gamedata = requests.get(url, headers=header)
@@ -82,9 +82,10 @@ class SteamView(APIView):
             negative = None
 
         if 'owners' in gamedata:
-            owners = gamedata['owners']
+            owners_str = gamedata['owners']
+            owners = self.read_owners(owners_str)
         else:
-            owners = None
+            owners_str = None
 
         if 'average_forever' in gamedata:
             average_forever = gamedata['average_forever']
@@ -111,7 +112,7 @@ class SteamView(APIView):
             'name': name,
             'positive_reviews_steam': positive,
             'negative_reviews_steam': negative,
-            # 'owners': owners,
+            'owners': owners,
             'average_forever': average_forever,
             'average_2weeks': average_2weeks,
             'price': price,
@@ -126,7 +127,7 @@ class SteamView(APIView):
             name = filtered_data['name'],
             positive_reviews_steam = filtered_data['positive_reviews_steam'],
             negative_reviews_steam = filtered_data['negative_reviews_steam'],
-            # owners = filtered_data['owners'],
+            owners = filtered_data['owners'],
             average_forever = filtered_data['average_forever'],
             average_2weeks = filtered_data['average_2weeks'],
             price = filtered_data['price'],
@@ -134,3 +135,35 @@ class SteamView(APIView):
         )
         new_game.save()
         print('o jogo salvou ' + new_game.name)
+
+
+    def read_owners(self, str_owners):
+        vector_numbers = self.valid_owners(str_owners)
+        average = self.calculates_avarege(vector_numbers)
+        return average
+
+
+    def valid_owners(self, str_owners):
+        low_average = str_owners.split(" .. ")[0]
+        high_average = str_owners.split(" .. ")[1]
+        low_average_valid = ""
+        for number in low_average:
+            if number != ",":
+                low_average_valid = low_average_valid + number
+
+        high_average_valid = ""
+        for number in high_average:
+            if number != ",":
+                high_average_valid = high_average_valid + number
+
+        low_average_int = int(low_average_valid)
+        high_average_int = int(high_average_valid)
+        return [low_average_int, high_average_int]
+
+    # This method takes a vector of numbers and
+    # calculates the mean between them
+    def calculates_avarege(self, numbers):
+        sum = 0
+        for number in numbers:
+            sum = sum + number
+        return sum / len(numbers)
