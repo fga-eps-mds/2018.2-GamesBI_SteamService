@@ -16,7 +16,15 @@ Including another URLconf
 from django.urls import include, path
 from django.contrib import admin
 
+from rest_framework import routers
+
+from SteamService.API.json.viewsets import GamesViewSet
+
+router = routers.DefaultRouter()
+router.register(r'games', GamesViewSet)
+
 urlpatterns = [
+    path('api/', include(router.urls)),
     # url(r'^admin/', admin.site.urls),
     path('admin/', admin.site.urls),
     path('import_data/', include('SteamService.importdata.urls')),
