@@ -8,20 +8,45 @@ from .serializers import GameSerializer
 
 
 class SteamView(APIView):
+
     '''
         View that calls SteamSpy API
         and return some relevant
         information about a game
         and filter for Null value
     '''
+
     def get(self, request, format=None):
+        Game.objects.all().delete()
         url = 'http://igdbweb:8000/api/get_igdb_games_list/id_steam'
-        header = {'Accept': 'application/json'}
-        id_data = requests.get(url, headers=header)
+        ndata = requests.get(url)
+        id_data = ndata.json()
 
-        return Response(id_data.json())
+        for game_id in id_data:
+            game_data = self.get_game_data(game_id['steam'])
+            filter_game_data = self.filter_game_data(game_data)
+            if filter_game_data:
+                self.save_game(filter_game_data)
 
+        games = Game.objects.all()
+        games_data = []
+        for game in games:
+            game_data = {
+                'id': game.id,
+                'name': game.name,
+                'positive_reviews_steam': game.positive_reviews_steam,
+                'negative_reviews_steam': game.negative_reviews_steam,
+                'owners': game.owners,
+                'average_forever': game.average_forever,
+                'average_2weeks': game.average_2weeks,
+                'price': game.price,
+                'lenguages': game.lenguages
 
+            }
+            games_data.append(game_data)
+        return Response(data=games_data)
+
+    
     def get_game_data(self, game_id):
         url = 'http://steamspy.com/api.php?request=appdetails&appid={}'.format(game_id)
         header = {'Accept': 'application/json'}
@@ -65,7 +90,7 @@ class SteamView(APIView):
         if 'average_2weeks' in gamedata:
             average_2weeks = gamedata['average_2weeks']
         else:
-            average_2weeks = NoneIGDB
+            average_2weeks = None
 
         if 'price' in gamedata:
             price = gamedata['price']
@@ -104,7 +129,7 @@ class SteamView(APIView):
             lenguages = filtered_data['lenguages'],
         )
         new_game.save()
-        print('o jogo salvou ' + new_game.name)
+        #print('o jogo salvou ' + new_game.name)
 
 
     def read_owners(self, str_owners):
