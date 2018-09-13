@@ -17,7 +17,7 @@ class SteamView(APIView):
     def get(self, request, format=None):
 
 
-        url = 'http://igdbweb:8000/get_igdb_games_list/Id_Steam'
+        url = 'http://igdbweb:8000/api/get_igdb_games_list/id_steam'
         header = {'Accept': 'application/json'}
         id_data = requests.get(url, headers=header)
         ndata = id_data.json()
@@ -34,13 +34,13 @@ class SteamView(APIView):
             game_data = {
                 'id': game.id,
                 'name': game.name,
-                'positive_reviews_steam': game.positive,
-                'negative_reviews_steam': game.negative,
+                'positive_reviews_steam': game.positive_reviews_steam,
+                'negative_reviews_steam': game.negative_reviews_steam,
                 'owners': game.owners,
                 'average_forever': game.average_forever,
                 'average_2weeks': game.average_2weeks,
                 'price': game.price,
-                'lenguages': game.languages
+                'lenguages': game.lenguages
             }
             games_data.append(game_data)
 
