@@ -15,41 +15,11 @@ class SteamView(APIView):
         and filter for Null value
     '''
     def get(self, request, format=None):
-
-        Game.objects.all().delete()
-
-        url = 'http://localhost:8000/get_igdb_games_list/Id_Steam'
+        url = 'http://igdbweb:8000/api/get_igdb_games_list/id_steam'
         header = {'Accept': 'application/json'}
         id_data = requests.get(url, headers=header)
-        ndata = id_data.json()
 
-        for game_id in id_data:
-            game_data = self.get_game_data(game_id)
-            filter_game_data = self.filter_game_data(game_data)
-            if filter_game_data:
-                self.save_game(filter_game_data)
-
-        games = Game.objects.all()
-        games_data = []
-        for game in games:
-            print('------------')
-            print(game.id)
-            print(game.name)
-            print(game.positive_reviews_steam)
-            print(game.negative_reviews_steam)
-            print(game.average_forever)
-            print(game.average_2weeks)
-            print(game.price)
-            print(game.owners)
-            print(game.lenguages)
-            print('------------')
-            game_data = {
-                'id': game.id,
-                'name': game.name,
-            }
-            games_data.append(game_data)
-
-        return Response(data=games_data)
+        return Response(id_data.json())
 
 
     def get_game_data(self, game_id):
