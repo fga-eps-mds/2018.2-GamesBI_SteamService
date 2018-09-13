@@ -4,25 +4,25 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .models import Game
-# from .serializers import GameSerializer
+from .serializers import GameSerializer
 
 
 class SteamView(APIView):
-
     '''
         View that calls SteamSpy API
         and return some relevant
         information about a game
         and filter for Null value
     '''
-
     def get(self, request, format=None):
-        Game.objects.all().delete()
-        url = 'http://igdbweb:8000/api/get_igdb_games_list/id_steam'
-        ndata = requests.get(url)
-        id_data = ndata.json()
 
-        for game_id in id_data:
+
+        url = 'http://igdbweb:8000/get_igdb_games_list/Id_Steam'
+        header = {'Accept': 'application/json'}
+        id_data = requests.get(url, headers=header)
+        ndata = id_data.json()
+
+        for game_id in ndata:
             game_data = self.get_game_data(game_id['steam'])
             filter_game_data = self.filter_game_data(game_data)
             if filter_game_data:
@@ -31,22 +31,33 @@ class SteamView(APIView):
         games = Game.objects.all()
         games_data = []
         for game in games:
+            print('------------')
+            print(game.id)
+            print(game.name)
+            print(game.positive_reviews_steam)
+            print(game.negative_reviews_steam)
+            print(game.average_forever)
+            print(game.average_2weeks)
+            print(game.price)
+            print(game.owners)
+            print(game.lenguages)
+            print('------------')
             game_data = {
                 'id': game.id,
                 'name': game.name,
-                'positive_reviews_steam': game.positive_reviews_steam,
-                'negative_reviews_steam': game.negative_reviews_steam,
+                'positive_reviews_steam': game.positive,
+                'negative_reviews_steam': game.negative,
                 'owners': game.owners,
                 'average_forever': game.average_forever,
                 'average_2weeks': game.average_2weeks,
                 'price': game.price,
-                'lenguages': game.lenguages
-
+                'lenguages': game.languages
             }
             games_data.append(game_data)
+
         return Response(data=games_data)
 
-    # metodo que que recebe id dos jogos e retonas os dados relacionados
+
     def get_game_data(self, game_id):
         url = 'http://steamspy.com/api.php?request=appdetails&appid={}'.format(game_id)
         header = {'Accept': 'application/json'}
@@ -114,25 +125,29 @@ class SteamView(APIView):
             'lenguages': languages
         }
         return filtered_data
-    # salvando os games no banco de dados
+
+
     def save_game(self, filtered_data):
         new_game = Game(
-            id=filtered_data['id'],
-            name=filtered_data['name'],
-            positive_reviews_steam=filtered_data['positive_reviews_steam'],
-            negative_reviews_steam=filtered_data['negative_reviews_steam'],
-            owners=filtered_data['owners'],
-            average_forever=filtered_data['average_forever'],
-            average_2weeks=filtered_data['average_2weeks'],
-            price=filtered_data['price'],
-            lenguages=filtered_data['lenguages']
+            id = filtered_data['id'],
+            name = filtered_data['name'],
+            positive_reviews_steam = filtered_data['positive_reviews_steam'],
+            negative_reviews_steam = filtered_data['negative_reviews_steam'],
+            owners = filtered_data['owners'],
+            average_forever = filtered_data['average_forever'],
+            average_2weeks = filtered_data['average_2weeks'],
+            price = filtered_data['price'],
+            lenguages = filtered_data['lenguages'],
         )
         new_game.save()
+
+
 
     def read_owners(self, str_owners):
         vector_numbers = self.valid_owners(str_owners)
         average = self.calculates_avarege(vector_numbers)
         return average
+
 
     def valid_owners(self, str_owners):
         low_average = str_owners.split(" .. ")[0]
