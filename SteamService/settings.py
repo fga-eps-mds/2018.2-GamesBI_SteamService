@@ -25,7 +25,7 @@ SECRET_KEY = '^zvhox!wg=jjyp5r%#)sy_6i+4albdi#@g^#p6jed$h0a05k0t'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -80,7 +80,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'djongo',
         'NAME': 'mongo',
-        'HOST': 'db'
+        'HOST': 'steamdb'
     }
 }
 

@@ -1,13 +1,13 @@
 version: '3.5'
 
 services:
-  db:
+  steamdb:
     image: mongo
     ports:
       - "27018:27017"
     networks:
       - proxynet
-  web:
+  steamweb:
     build: .
     command: python3 manage.py runserver 0.0.0.0:8000
     volumes:
@@ -15,7 +15,7 @@ services:
     ports:
       - "8001:8000"
     depends_on:
-      - db
+      - steamdb
     networks:
       - proxynet
 
