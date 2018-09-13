@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .models import Game
-from .serializers import GameSerializer
+# from .serializers import GameSerializer
 
 
 class SteamView(APIView):
@@ -46,7 +46,7 @@ class SteamView(APIView):
             games_data.append(game_data)
         return Response(data=games_data)
 
-    
+    # metodo que que recebe id dos jogos e retonas os dados relacionados
     def get_game_data(self, game_id):
         url = 'http://steamspy.com/api.php?request=appdetails&appid={}'.format(game_id)
         header = {'Accept': 'application/json'}
@@ -114,29 +114,25 @@ class SteamView(APIView):
             'lenguages': languages
         }
         return filtered_data
-
-
+    # salvando os games no banco de dados
     def save_game(self, filtered_data):
         new_game = Game(
-            id = filtered_data['id'],
-            name = filtered_data['name'],
-            positive_reviews_steam = filtered_data['positive_reviews_steam'],
-            negative_reviews_steam = filtered_data['negative_reviews_steam'],
-            owners = filtered_data['owners'],
-            average_forever = filtered_data['average_forever'],
-            average_2weeks = filtered_data['average_2weeks'],
-            price = filtered_data['price'],
-            lenguages = filtered_data['lenguages'],
+            id=filtered_data['id'],
+            name=filtered_data['name'],
+            positive_reviews_steam=filtered_data['positive_reviews_steam'],
+            negative_reviews_steam=filtered_data['negative_reviews_steam'],
+            owners=filtered_data['owners'],
+            average_forever=filtered_data['average_forever'],
+            average_2weeks=filtered_data['average_2weeks'],
+            price=filtered_data['price'],
+            lenguages=filtered_data['lenguages']
         )
         new_game.save()
-        #print('o jogo salvou ' + new_game.name)
-
 
     def read_owners(self, str_owners):
         vector_numbers = self.valid_owners(str_owners)
         average = self.calculates_avarege(vector_numbers)
         return average
-
 
     def valid_owners(self, str_owners):
         low_average = str_owners.split(" .. ")[0]
