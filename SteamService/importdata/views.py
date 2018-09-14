@@ -29,7 +29,7 @@ class SteamView(APIView):
             if filter_game_data:
                 self.save_game(filter_game_data)
                 print("Jogo de id: " + str(game_id['steam']) + " salvo com sucesso!")
-                i = i + 1;
+                i = i + 1
                 print("Número de jogos adicionados: " + str(i))
 
         games = Game.objects.all()

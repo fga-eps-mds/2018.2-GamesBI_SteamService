@@ -27,6 +27,7 @@ urlpatterns = [
     path('api/', include(router.urls)),
     # url(r'^admin/', admin.site.urls),
     path('admin/', admin.site.urls),
+    path('api/', include('SteamService.API.urls')),
     path('import_data/', include('SteamService.importdata.urls')),
     path(r'^api-auth/', include('rest_framework.urls'))
 ]
