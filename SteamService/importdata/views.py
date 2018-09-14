@@ -16,17 +16,21 @@ class SteamView(APIView):
     '''
     def get(self, request, format=None):
 
-
+        Game.objects.all().delete()
         url = 'http://igdbweb:8000/api/get_igdb_games_list/id_steam'
         header = {'Accept': 'application/json'}
         id_data = requests.get(url, headers=header)
         ndata = id_data.json()
 
+        i = 0
         for game_id in ndata:
             game_data = self.get_game_data(game_id['steam'])
             filter_game_data = self.filter_game_data(game_data)
             if filter_game_data:
                 self.save_game(filter_game_data)
+                print("Jogo de id: " + str(game_id['steam']) + " salvo com sucesso!")
+                i = i + 1;
+                print("Número de jogos adicionados: " + str(i))
 
         games = Game.objects.all()
         games_data = []
