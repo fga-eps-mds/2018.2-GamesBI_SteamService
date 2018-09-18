@@ -17,8 +17,8 @@ from django.urls import include, path
 from django.contrib import admin
 
 urlpatterns = [
-    # url(r'^admin/', admin.site.urls),
     path('admin/', admin.site.urls),
-    path('import_data/', include('SteamService.Game.urls')),
+    path('api/', include('SteamService.API.urls')),
+    path('import_data/', include('SteamService.importdata.urls')),
     path(r'^api-auth/', include('rest_framework.urls'))
 ]
