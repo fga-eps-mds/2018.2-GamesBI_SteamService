@@ -43,7 +43,7 @@ migrate:
 
 fixture:
 	# Generate fixtures saved upon importdata models
-	sudo docker-compose run steamweb python manage.py dumpdata importdata --format json > IGDBService/importdata/fixtures/data.json
+	sudo docker-compose run steamweb python manage.py dumpdata importdata --format json > SteamService/importdata/fixtures/data.json
 
 loaddata:
 	# load fixtures saved upon importdata models
