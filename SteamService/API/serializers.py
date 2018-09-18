@@ -1,4 +1,4 @@
-from .models import Game
+from SteamService.importdata.models import Game
 from rest_framework import serializers
 
 

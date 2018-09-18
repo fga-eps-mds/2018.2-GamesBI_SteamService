@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class Game(models.Model):
     id = models.IntegerField(
         ('Stream ID'),
@@ -51,7 +52,7 @@ class Game(models.Model):
 
     def __str__(self):
         """
-	    Returns the object as a string, the attribute that will represent
-	    the object.
-	    """
+            Returns the object as a string, the attribute that will represent
+            the object.
+        """
         return self.name

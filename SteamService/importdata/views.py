@@ -15,12 +15,40 @@ class SteamView(APIView):
         and filter for Null value
     '''
     def get(self, request, format=None):
+
+        Game.objects.all().delete()
         url = 'http://igdbweb:8000/api/get_igdb_games_list/id_steam'
         header = {'Accept': 'application/json'}
         id_data = requests.get(url, headers=header)
+        ndata = id_data.json()
 
-        return Response(id_data.json())
+        i = 0
+        for game_id in ndata:
+            game_data = self.get_game_data(game_id['steam'])
+            filter_game_data = self.filter_game_data(game_data)
+            if filter_game_data:
+                self.save_game(filter_game_data)
+                print("Jogo de id: " + str(game_id['steam']) + " salvo com sucesso!")
+                i = i + 1
+                print("Número de jogos adicionados: " + str(i))
 
+        games = Game.objects.all()
+        games_data = []
+        for game in games:
+            game_data = {
+                'id': game.id,
+                'name': game.name,
+                'positive_reviews_steam': game.positive_reviews_steam,
+                'negative_reviews_steam': game.negative_reviews_steam,
+                'owners': game.owners,
+                'average_forever': game.average_forever,
+                'average_2weeks': game.average_2weeks,
+                'price': game.price,
+                'lenguages': game.lenguages
+            }
+            games_data.append(game_data)
+
+        return Response(data=games_data)
 
     def get_game_data(self, game_id):
         url = 'http://steamspy.com/api.php?request=appdetails&appid={}'.format(game_id)
@@ -65,7 +93,7 @@ class SteamView(APIView):
         if 'average_2weeks' in gamedata:
             average_2weeks = gamedata['average_2weeks']
         else:
-            average_2weeks = NoneIGDB
+            average_2weeks = None
 
         if 'price' in gamedata:
             price = gamedata['price']
@@ -90,28 +118,24 @@ class SteamView(APIView):
         }
         return filtered_data
 
-
     def save_game(self, filtered_data):
         new_game = Game(
-            id = filtered_data['id'],
-            name = filtered_data['name'],
-            positive_reviews_steam = filtered_data['positive_reviews_steam'],
-            negative_reviews_steam = filtered_data['negative_reviews_steam'],
-            owners = filtered_data['owners'],
-            average_forever = filtered_data['average_forever'],
-            average_2weeks = filtered_data['average_2weeks'],
-            price = filtered_data['price'],
-            lenguages = filtered_data['lenguages'],
+            id=filtered_data['id'],
+            name=filtered_data['name'],
+            positive_reviews_steam=filtered_data['positive_reviews_steam'],
+            negative_reviews_steam=filtered_data['negative_reviews_steam'],
+            owners=filtered_data['owners'],
+            average_forever=filtered_data['average_forever'],
+            average_2weeks=filtered_data['average_2weeks'],
+            price=filtered_data['price'],
+            lenguages=filtered_data['lenguages'],
         )
         new_game.save()
-        print('o jogo salvou ' + new_game.name)
-
 
     def read_owners(self, str_owners):
         vector_numbers = self.valid_owners(str_owners)
         average = self.calculates_avarege(vector_numbers)
         return average
-
 
     def valid_owners(self, str_owners):
         low_average = str_owners.split(" .. ")[0]
