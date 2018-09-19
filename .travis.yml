@@ -12,6 +12,8 @@ before_install:
 script: 
   - docker-compose up -d
   - sleep 10
+  - docker-compose run steamweb python manage.py makemigrations importdata
+  - docker-compose run steamweb python manage.py migrate importdata
   - docker-compose run steamweb coverage run --source=. manage.py test
   - docker-compose run steamweb coverage report
 
