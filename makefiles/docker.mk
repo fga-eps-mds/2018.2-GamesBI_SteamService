@@ -47,4 +47,4 @@ fixture:
 
 loaddata:
 	# load fixtures saved upon importdata models
-	sudo docker-compose run steamweb python manage.py loaddata data.json
+	sudo docker-compose run steamweb python manage.py loaddata steam_data.json
